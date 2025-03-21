@@ -1,0 +1,18 @@
+
+:root {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --orange: #EEAB36;
+  --darkgrey: #464340;
+  --hover: #d08700;
+  --lightorange: #eccb93;
+
+  color: var(--darkgrey);
+}
+
+body {
+  margin: 0;
+}
