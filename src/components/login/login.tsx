@@ -1,11 +1,11 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, CardContent, FormControl, FormLabel, TextField, Typography, Stack, Fade, Snackbar } from '@mui/material';
-import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
-import {useLogin}  from '../../api/hooks';
+import { styled } from '@mui/material/styles';
 import { AxiosResponse } from "axios";
+import { useLogin }  from '../../api/hooks';
 import logo from "../../assets/logo.png"
-import { useState } from "react";
 
 const Container = styled(Stack)(() => ({
     height: '100vh',
@@ -26,7 +26,7 @@ const Container = styled(Stack)(() => ({
 }));
 
 function Login() {
-    var navigate = useNavigate();
+    const navigate = useNavigate();
 
     const [errMsg, setErrMsg] = useState('');
     const [nameError, setNameError] = useState(false);
@@ -71,11 +71,11 @@ function Login() {
         }
 
         useLogin(name, email)
-        .then((response: AxiosResponse) => {
+        .then((_response: AxiosResponse) => {
             localStorage.setItem("user-name", name ?? "")
             navigate("/dashboard");
         })
-        .catch((err) => {
+        .catch((_err) => {
             setErrMsg("We encountered a problem when logging you in.")
         });
     };
