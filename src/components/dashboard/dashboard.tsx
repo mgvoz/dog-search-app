@@ -87,7 +87,9 @@ const favoritesModalStyle = {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    fontFamily: 'Roboto'
+    fontFamily: 'Roboto',
+    maxHeight: '80vh',
+    gap: '15px'
   };
   const matchModalStyle = {
     position: 'absolute',
@@ -428,115 +430,117 @@ function Dashboard() {
                     aria-describedby="filter options for dog results"
                 >
                     <Box component='div' sx={filterModalStyle}> 
-                        <Button onClick={()=> setFiltersOpen(false)} sx={modalCloseStyle}><CloseIcon/></Button>
-                        <Divider sx={{color: 'var(--darkgrey)', width: '100%'}} variant='fullWidth' textAlign='center'>Sort</Divider>
-                        <FormControl sx={formControlStyle}>
-                            <Select
-                                sx={formItemStyle}
-                                variant='standard'
-                                labelId="sort-label"
-                                id="sort"
-                                value={sort}
-                                label="Sort"
-                                color="primary"
-                                onChange={(event, _child) => sortChange(event)}
-                            >
-                                {sortOptions.map((option) => {
-                                    return (
-                                        <MenuItem key={option.id} sx={{color: 'var(--darkgrey)'}} value={option.value}>{option.name}</MenuItem>
-                                    )
-                                })}
-                            </Select>
-                        </FormControl>
-                        <Divider sx={{ color: 'var(--darkgrey)', marginTop: '20px;', width: '100%' }} variant='fullWidth' textAlign='center'>Filter</Divider>
-                        <RadioGroup
-                            row
-                            aria-labelledby="location-search-radio-group"
-                            defaultValue="cityState"
-                            name="location-search-radio-group"
-                            value={locationSearchMode}
-                            onChange={(event) => handleLocationSearchMode(event.target.value)}
-                        >
-                            <FormControlLabel value="cityState" control={<Radio />} label="City, State" />
-                            <FormControlLabel value="zipCodes" control={<Radio />} label="Zip Code(s)" />
-                        </RadioGroup>
-                        {locationSearchMode == "zipCodes" ? (
+                        <Button onClick={() => setFiltersOpen(false)} sx={modalCloseStyle}><CloseIcon /></Button>
+                        <Box component='div' sx={{overflow: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '15px', width: '100%'}}>
+                            <Divider sx={{color: 'var(--darkgrey)', width: '100%'}} variant='fullWidth' textAlign='center'>Sort</Divider>
                             <FormControl sx={formControlStyle}>
-                                <TextField
-                                    id='zipCodes'
-                                    name='zipCodes'
-                                    placeholder='01234, 56789'
-                                    variant='standard'
-                                    color='primary'
-                                    label='Zip Code(s)'
-                                    value={zipCodeValue}
-                                    onChange={(event) => setZipCodeValue(event.target.value.split(","))}
+                                <Select
                                     sx={formItemStyle}
-                                />
+                                    variant='standard'
+                                    labelId="sort-label"
+                                    id="sort"
+                                    value={sort}
+                                    label="Sort"
+                                    color="primary"
+                                    onChange={(event, _child) => sortChange(event)}
+                                >
+                                    {sortOptions.map((option) => {
+                                        return (
+                                            <MenuItem key={option.id} sx={{color: 'var(--darkgrey)'}} value={option.value}>{option.name}</MenuItem>
+                                        )
+                                    })}
+                                </Select>
                             </FormControl>
-                        ) : (
+                            <Divider sx={{ color: 'var(--darkgrey)', marginTop: '20px;', width: '100%' }} variant='fullWidth' textAlign='center'>Filter</Divider>
+                            <RadioGroup
+                                row
+                                aria-labelledby="location-search-radio-group"
+                                defaultValue="cityState"
+                                name="location-search-radio-group"
+                                value={locationSearchMode}
+                                onChange={(event) => handleLocationSearchMode(event.target.value)}
+                            >
+                                <FormControlLabel value="cityState" control={<Radio />} label="City, State" />
+                                <FormControlLabel value="zipCodes" control={<Radio />} label="Zip Code(s)" />
+                            </RadioGroup>
+                            {locationSearchMode == "zipCodes" ? (
+                                <FormControl sx={formControlStyle}>
+                                    <TextField
+                                        id='zipCodes'
+                                        name='zipCodes'
+                                        placeholder='01234, 56789'
+                                        variant='standard'
+                                        color='primary'
+                                        label='Zip Code(s)'
+                                        value={zipCodeValue}
+                                        onChange={(event) => setZipCodeValue(event.target.value.split(","))}
+                                        sx={formItemStyle}
+                                    />
+                                </FormControl>
+                            ) : (
+                                <FormControl sx={formControlStyle}>
+                                    <Autocomplete
+                                        multiple
+                                        id="locations"
+                                        onChange={((_event, values) => handleLocationChange(values))}
+                                        options={locationValues.map((location) => {return location.city + ", " + location.state})}
+                                        color='primary'
+                                        getOptionLabel={(option: string) => option}
+                                        value={selectedLocations.map((location) => {return location.city + ", " + location.state})}
+                                        filterSelectedOptions
+                                        limitTags={2}
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                variant="standard"
+                                                label='City, State'
+                                                sx={{color: 'var(--darkgrey)'}}
+                                            />
+                                        )}
+                                        sx={formItemStyle}
+                                    />
+                                </FormControl>
+                            )}
                             <FormControl sx={formControlStyle}>
                                 <Autocomplete
                                     multiple
-                                    id="locations"
-                                    onChange={((_event, values) => handleLocationChange(values))}
-                                    options={locationValues.map((location) => {return location.city + ", " + location.state})}
+                                    id="breeds"
+                                    onChange={((_event, values) => setSelectedBreeds(values))}
+                                    options={breedValues}
                                     color='primary'
                                     getOptionLabel={(option: string) => option}
-                                    value={selectedLocations.map((location) => {return location.city + ", " + location.state})}
+                                    value={selectedBreeds}
                                     filterSelectedOptions
                                     limitTags={2}
                                     renderInput={(params) => (
                                         <TextField
                                             {...params}
                                             variant="standard"
-                                            label='City, State'
+                                            label='Breed(s)'
                                             sx={{color: 'var(--darkgrey)'}}
                                         />
                                     )}
                                     sx={formItemStyle}
                                 />
                             </FormControl>
-                        )}
-                        <FormControl sx={formControlStyle}>
-                            <Autocomplete
-                                multiple
-                                id="breeds"
-                                onChange={((_event, values) => setSelectedBreeds(values))}
-                                options={breedValues}
-                                color='primary'
-                                getOptionLabel={(option: string) => option}
-                                value={selectedBreeds}
-                                filterSelectedOptions
-                                limitTags={2}
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        variant="standard"
-                                        label='Breed(s)'
-                                        sx={{color: 'var(--darkgrey)'}}
-                                    />
-                                )}
-                                sx={formItemStyle}
-                            />
-                        </FormControl>
-                        <FormControl sx={{...formControlStyle}}>
-                            <FormLabel>Age</FormLabel>
-                            <Slider
-                                getAriaLabel={() => 'Minimum distance'}
-                                value={sliderValues}
-                                min={0}
-                                max={25}
-                                onChange={(_event, value) => setSliderValues(value as number[])}
-                                valueLabelDisplay="auto"
-                                getAriaValueText={(_value, _index) => `Age range between ${sliderValues[0]} and ${sliderValues[1]}`}
-                                disableSwap
-                                color='primary'
-                                sx={{width: '95%', alignSelf: 'center'}}
-                            />
-                        </FormControl>
-                        <Button type='button' onClick={applyFilters} sx={buttonStyle} color='primary' variant="contained">Apply Filters</Button>
-                        <Button type='button' sx={buttonStyle} color='primary' variant="outlined" onClick={clearFilters}>Clear Filters</Button>
+                            <FormControl sx={{...formControlStyle}}>
+                                <FormLabel>Age</FormLabel>
+                                <Slider
+                                    getAriaLabel={() => 'Minimum distance'}
+                                    value={sliderValues}
+                                    min={0}
+                                    max={25}
+                                    onChange={(_event, value) => setSliderValues(value as number[])}
+                                    valueLabelDisplay="auto"
+                                    getAriaValueText={(_value, _index) => `Age range between ${sliderValues[0]} and ${sliderValues[1]}`}
+                                    disableSwap
+                                    color='primary'
+                                    sx={{width: '95%', alignSelf: 'center'}}
+                                />
+                            </FormControl>
+                            <Button type='button' onClick={applyFilters} sx={buttonStyle} color='primary' variant="contained">Apply Filters</Button>
+                            <Button type='button' sx={buttonStyle} color='primary' variant="outlined" onClick={clearFilters}>Clear Filters</Button>
+                        </Box>
                     </Box>   
                 </Modal>
                 <Modal
@@ -550,16 +554,18 @@ function Dashboard() {
                         <Typography id="favorites-title" variant="h6" component="h2" color='var(--darkgrey)'>
                             Here are the dogs you <FavoriteIcon color='primary'/>
                         </Typography>
-                        <List sx={{padding: ['20px 0 20px 0', '20px 0 20px 0', '25px', '25px']}}>
-                            {favorites.map((favorite) => { return (
-                                <ListItem key={favorite.id} sx={{paddingLeft: ['16px', '0', '16px', '0'], paddingRight: ['16px', '0', '16px', '0']}}>
-                                    <ListItemIcon>
-                                        <img height={55} width={55} src={favorite.img} style={{'borderRadius': '50%'}} alt="image of a dog"/>
-                                    </ListItemIcon>
-                                    <Box component='div' sx={{marginLeft: '10px'}}><b>{favorite.name}</b><br /> | Age: <b>{favorite.age}</b> <br />| Breed: <b>{favorite.breed}</b><br />| Location: <b>{favorite.city}, {favorite.state} { favorite.zip_code}</b></Box>
-                                </ListItem>
-                            )})}
-                        </List>
+                        <Box component='div' sx={{overflow: 'auto'}}>
+                            <List sx={{padding: ['20px 0 20px 0', '20px 0 20px 0', '25px', '25px']}}>
+                                {favorites.map((favorite) => { return (
+                                    <ListItem key={favorite.id} sx={{paddingLeft: ['16px', '0', '16px', '0'], paddingRight: ['16px', '0', '16px', '0']}}>
+                                        <ListItemIcon>
+                                            <img height={55} width={55} src={favorite.img} style={{'borderRadius': '50%'}} alt="image of a dog"/>
+                                        </ListItemIcon>
+                                        <Box component='div' sx={{marginLeft: '10px'}}><b>{favorite.name}</b><br /> | Age: <b>{favorite.age}</b> <br />| Breed: <b>{favorite.breed}</b><br />| Location: <b>{favorite.city}, {favorite.state} { favorite.zip_code}</b></Box>
+                                    </ListItem>
+                                )})}
+                            </List>
+                        </Box>
                         <Button variant='contained' color="primary" sx={{height: 'min-content'}} onClick={() => findMatch()}>Find your perfect pet match!</Button>
                     </Box>
                 </Modal>
